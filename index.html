@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Happy Ramdhan >Ridzz & Araaa</title>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            background-color: #0a3b2e;
+        }
+        
+        /* 3D Background container */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Content wrapper */
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            backdrop-filter: brightness(0.8);
+        }
+        
+        /* Islamic pattern overlay - diperhalus */
+        .islamic-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.15"><path d="M50 0 L61 35 L98 35 L68 57 L79 92 L50 70 L21 92 L32 57 L2 35 L39 35 Z" fill="%2300ffaa"/><circle cx="50" cy="50" r="15" fill="%2300ffaa"/></svg>');
+            background-size: 120px 120px;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.25;
+        }
+        
+        /* Main title - FIXED: no background blocking */
+        .ramadhan-title {
+            font-size: 4rem;
+            text-align: center;
+            margin: 30px 0 20px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            animation: fadeInSoft 2.5s ease;
+            background: linear-gradient(135deg, #fff7b0, #ffd700, #aaff00, #00ffaa, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px #00ffaa, 0 0 60px #00ffaa, 0 0 90px #00ffaa;
+            position: relative;
+            filter: drop-shadow(0 0 40px rgba(0, 255, 170, 0.8));
+            transform: scale(1.05);
+            /* REMOVED background-color that caused box */
+        }
+        
+        /* Decorative elements - terpisah dari title biar gak ganggu */
+        .title-decor-left {
+            font-size: 5rem;
+            position: absolute;
+            left: 10%;
+            top: 15%;
+            filter: drop-shadow(0 0 30px gold);
+            animation: softFloat 8s ease-in-out infinite;
+            z-index: 20;
+        }
+        
+        .title-decor-right {
+            font-size: 5rem;
+            position: absolute;
+            right: 10%;
+            top: 15%;
+            filter: drop-shadow(0 0 30px #00ffaa);
+            animation: softFloat 8s ease-in-out infinite reverse;
+            z-index: 20;
+        }
+        
+        /* Subtitle with emojis - enhanced glow */
+        .islamic-emoji {
+            font-size: 3.5rem;
+            text-align: center;
+            margin: 30px 0 20px;
+            filter: drop-shadow(0 0 30px #ffaa00) drop-shadow(0 0 60px #ffaa00);
+            letter-spacing: 20px;
+            /* REMOVED ANIMATION */
+        }
+        
+        /* Additional floating decorations */
+        .floating-decor {
+            position: absolute;
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 25px #00ffaa);
+            z-index: 15;
+            animation: softFloat 12s ease-in-out infinite;
+        }
+        
+        .decor1 { top: 5%; left: 5%; animation-delay: 0s; }
+        .decor2 { top: 20%; right: 5%; animation-delay: 2s; }
+        .decor3 { bottom: 10%; left: 8%; animation-delay: 4s; }
+        .decor4 { bottom: 25%; right: 8%; animation-delay: 6s; }
+        .decor5 { top: 40%; left: 12%; animation-delay: 3s; }
+        .decor6 { bottom: 40%; right: 12%; animation-delay: 5s; }
+        
+        /* Photo frames container */
+        .photo-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin: 50px 0;
+            perspective: 1000px;
+        }
+        
+        /* Islamic border frame - GREEN NEON TERANG BANGET */
+        .photo-frame {
+            width: 180px;
+            height: 220px;
+            border: 10px solid transparent;
+            border-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%2300ffaa"><path d="M20 10 L80 10 L90 30 L80 50 L90 70 L80 90 L20 90 L10 70 L20 50 L10 30 Z" stroke="%2300ffaa" stroke-width="4" fill="none"/><circle cx="30" cy="30" r="6" fill="%2300ffaa"/><circle cx="70" cy="30" r="6" fill="%2300ffaa"/><circle cx="50" cy="50" r="10" fill="%2300ffaa"/><circle cx="30" cy="70" r="6" fill="%2300ffaa"/><circle cx="70" cy="70" r="6" fill="%2300ffaa"/></svg>') 30 stretch;
+            border-image-outset: 12px;
+            border-radius: 25px 45px 25px 45px;
+            background-color: rgba(0, 30, 20, 0.5);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 50px #00ffaa, 0 0 100px #00ffaa, 0 0 150px #00ffaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            animation: softFloat 8s ease-in-out infinite;
+        }
+        
+        .photo-frame:hover {
+            transform: scale(1.15) rotateY(5deg);
+            box-shadow: 0 0 80px #00ffaa, 0 0 160px #00ffaa, 0 0 240px #ffff00;
+        }
+        
+        .photo-frame:nth-child(1) { animation-delay: 0s; }
+        .photo-frame:nth-child(2) { animation-delay: 0.8s; }
+        .photo-frame:nth-child(3) { animation-delay: 1.6s; }
+        .photo-frame:nth-child(4) { animation-delay: 2.4s; }
+        .photo-frame:nth-child(5) { animation-delay: 3.2s; }
+        
+        .photo-frame img {
+            width: 160px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 20px 40px 20px 40px;
+            border: 4px solid #00ffaa;
+            box-shadow: inset 0 0 30px #00ffaa;
+        }
+        
+        /* Audio player - enhanced */
+        .audio-player {
+            margin: 40px 0 30px;
+            width: 85%;
+            max-width: 450px;
+            background: rgba(0, 30, 20, 0.8);
+            backdrop-filter: blur(15px);
+            border: 4px solid #00ffaa;
+            border-radius: 60px;
+            padding: 20px 25px;
+            box-shadow: 0 0 60px #00ffaa, 0 0 120px #00ffaa;
+        }
+        
+        .audio-player audio {
+            width: 100%;
+            outline: none;
+            filter: drop-shadow(0 0 20px #00ffaa);
+        }
+        
+        /* Love message - enhanced glow */
+        .love-message {
+            font-size: 1.8rem;
+            text-align: center;
+            max-width: 700px;
+            margin: 40px auto 30px;
+            padding: 40px 30px;
+            background: rgba(0, 40, 25, 0.7);
+            backdrop-filter: blur(15px);
+            border: 4px solid #00ffaa;
+            border-radius: 40px 80px 40px 80px;
+            line-height: 2.2;
+            text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff69b4;
+            box-shadow: 0 0 80px #00ffaa, 0 0 160px #00ffaa;
+            position: relative;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+        
+        .love-message::before {
+            content: "❤️🔥";
+            font-size: 4rem;
+            position: absolute;
+            left: -30px;
+            top: -30px;
+            filter: drop-shadow(0 0 30px red) drop-shadow(0 0 60px red);
+        }
+        
+        .love-message::after {
+            content: "🔥❤️";
+            font-size: 4rem;
+            position: absolute;
+            right: -30px;
+            bottom: -30px;
+            filter: drop-shadow(0 0 30px red) drop-shadow(0 0 60px red);
+        }
+        
+        /* Copyright - glowing */
+        .copyright {
+            margin: 60px 0 30px;
+            font-size: 1.4rem;
+            color: #ffffff;
+            text-shadow: 0 0 20px cyan, 0 0 40px #00ffaa, 0 0 80px cyan;
+            border-top: 3px solid #00ffaa;
+            padding-top: 25px;
+            width: 90%;
+            text-align: center;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+        
+        /* Animations - SUPER LEMBUT */
+        @keyframes fadeInSoft {
+            0% { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1.05); }
+        }
+        
+        @keyframes softFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        
+        /* Enhanced glow untuk elemen */
+        .glow-text {
+            text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ramadhan-title {
+                font-size: 2.8rem;
+                letter-spacing: 4px;
+            }
+            .title-decor-left, .title-decor-right {
+                font-size: 3rem;
+                top: 8%;
+            }
+            .islamic-emoji {
+                font-size: 2.5rem;
+                letter-spacing: 10px;
+            }
+            .photo-frame {
+                width: 140px;
+                height: 180px;
+            }
+            .photo-frame img {
+                width: 120px;
+                height: 160px;
+            }
+            .love-message {
+                font-size: 1.4rem;
+                padding: 30px 20px;
+            }
+            .floating-decor {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Decorations (Simple tapi manjain mata) -->
+    <div class="floating-decor decor1">🌙</div>
+    <div class="floating-decor decor2">✨</div>
+    <div class="floating-decor decor3">☪️</div>
+    <div class="floating-decor decor4">🕌</div>
+    <div class="floating-decor decor5">🌟</div>
+    <div class="floating-decor decor6">💚</div>
+    
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container"></div>
+    
+    <!-- Islamic Pattern Overlay -->
+    <div class="islamic-pattern"></div>
+    
+    <!-- Title Decorations (terpisah) -->
+    <div class="title-decor-left">🌙</div>
+    <div class="title-decor-right">☪️</div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Happy Ramadhan Title - FIXED: NO BOX BACKGROUND -->
+        <h1 class="ramadhan-title">HAPPY RAMADHAN 2026</h1>
+        
+        <!-- Islamic Emoji Row - SUPER GLOW -->
+        <div class="islamic-emoji">
+            ☪️ ✨ 🕌 ✨ ☪️ ✨ 🌙 ✨ ☪️
+        </div>
+        
+        <!-- 5 Photo Frames with Islamic Borders - HIJAU NEON -->
+        <div class="photo-gallery">
+            <div class="photo-frame">
+                <img src="foto1.jpg" alt="Foto 1" onerror="this.src='https://via.placeholder.com/160x200/0a4d3a/00ffaa?text=Foto+1&font=lato'">
+            </div>
+            <div class="photo-frame">
+                <img src="foto2.jpg" alt="Foto 2" onerror="this.src='https://via.placeholder.com/160x200/0a4d3a/00ffaa?text=Foto+2&font=lato'">
+            </div>
+            <div class="photo-frame">
+                <img src="foto3.jpg" alt="Foto 3" onerror="this.src='https://via.placeholder.com/160x200/0a4d3a/00ffaa?text=Foto+3&font=lato'">
+            </div>
+            <div class="photo-frame">
+                <img src="foto4.jpg" alt="Foto 4" onerror="this.src='https://via.placeholder.com/160x200/0a4d3a/00ffaa?text=Foto+4&font=lato'">
+            </div>
+            <div class="photo-frame">
+                <img src="foto5.jpg" alt="Foto 5" onerror="this.src='https://via.placeholder.com/160x200/0a4d3a/00ffaa?text=Foto+5&font=lato'">
+            </div>
+        </div>
+        
+        <!-- Audio Player -->
+        <div class="audio-player">
+            <audio controls autoplay loop>
+                <source src="audio.gw" type="audio/mpeg">
+                <source src="audio.mp3" type="audio/mpeg">
+                Browser lu ketinggalan zaman, gak bisa mainin audio!
+            </audio>
+        </div>
+        
+        <!-- Love Message -->
+        <div class="love-message">
+            "makasih yaa raaa udahh maww nemenin ridwann sampeee siniii smeogaa abisaaa ssmpeee selamanyaa yaaaa , jujurrr senengg bangettt bisaaa kenall kamuuu akuu harappp kamuuuu bisaaa smaaa akuuu terussss menerusssss jangann gampangg terbawaa arussss yaaa jangann mudahh terbawaa arusss ingattt ituu , jangann mawww di aturrr temenn janagann mawww dengrinn kataa temenn jikaa tujuann nyaaa  untukk memisahkann kitaaaaa , kitaaa memoungaii janjiii yangggg samaaaaa marii kitaaaa tuntunn janjiii ituuu samaaa smaaaa sampeee tujuannn kitaa tecapaii yaaa , sesulittt apapunnnn halangannn kitaa kitaaas lewatii bersmaaa yaaaa jangann gampangg terbawaaa susaaasaanaaaaa yaaaa ayokk samaa smaaaaaa kitaaa lewatiiii bersamaa sjssahh sennagg kitaa harusss bersamaaaaa haruss ingatt jugaa jangann gampangg kemakann onongann oranggg yaaaaa , mungkinn adaaa ajaaa yanggg irii smaaa hubungann kitaaa sehinggaaa mnejelkkann namaaa salah satu dsri kitaaa makaa dsrii ituuu ayokk jalaanii onlyy berduaa haruss berduaaa,<br>
+            Ridzzwan alwyas lovingg araaaa🤍🤍🤍💝🫂🫂🫂"<br>
+            <span style="font-size: 2.5rem; display: block; margin-top: 30px; filter: drop-shadow(0 0 30px red);">❤️ 🌙 ✨ ☪️</span>
+        </div>
+        
+        <!-- Copyright -->
+        <div class="copyright">
+            Copyright © Fromm Ridzzz Verall 2026
+        </div>
+    </div>
+    
+    <!-- Three.js Library for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // Three.js 3D Background with Islamic Theme - SUPER LEMBUT
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a3b2e); // Dark green base
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 35;
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+        
+        // Lighting - soft
+        const ambientLight = new THREE.AmbientLight(0x305050);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffeedd, 0.8);
+        directionalLight.position.set(1, 2, 1);
+        scene.add(directionalLight);
+        
+        const pointLight = new THREE.PointLight(0x00ffaa, 1.2, 60);
+        pointLight.position.set(0, 5, 25);
+        scene.add(pointLight);
+        
+        // Create Islamic Stars (Particles) - lebih sedikit tapi lebih terang
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 800; // dikurangi biar ringan
+        const starsPositions = new Float32Array(starsCount * 3);
+        const starsColors = new Float32Array(starsCount * 3);
+        
+        for (let i = 0; i < starsCount; i++) {
+            const r = 45 + Math.random() * 50;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            
+            starsPositions[i*3] = r * Math.sin(phi) * Math.cos(theta);
+            starsPositions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+            starsPositions[i*3+2] = r * Math.cos(phi);
+            
+            const colorChoice = Math.random();
+            if (colorChoice < 0.4) {
+                starsColors[i*3] = 0.2; starsColors[i*3+1] = 1.0; starsColors[i*3+2] = 0.3; // Hijau terang
+            } else if (colorChoice < 0.7) {
+                starsColors[i*3] = 1.0; starsColors[i*3+1] = 0.9; starsColors[i*3+2] = 0.1; // Gold
+            } else {
+                starsColors[i*3] = 1.0; starsColors[i*3+1] = 1.0; starsColors[i*3+2] = 1.0; // White
+            }
+        }
+        
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+        starsGeometry.setAttribute('color', new THREE.BufferAttribute(starsColors, 3));
+        
+        const starsMaterial = new THREE.PointsMaterial({ 
+            size: 0.6, 
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.9,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+        
+        // Create Crescent Moons - glow effect
+        function createMoon( color = 0x00ffaa, size = 1.5, pos = {x:0,y:0,z:0} ) {
+            const moonGroup = new THREE.Group();
+            
+            const geometry1 = new THREE.SphereGeometry(size, 48, 48);
+            const material1 = new THREE.MeshPhongMaterial({ 
+                color: color,
+                emissive: 0x004433,
+                shininess: 40,
+                transparent: true,
+                opacity: 0.8
+            });
+            const sphere1 = new THREE.Mesh(geometry1, material1);
+            moonGroup.add(sphere1);
+            
+            const geometry2 = new THREE.SphereGeometry(size * 0.88, 48, 48);
+            const material2 = new THREE.MeshPhongMaterial({ 
+                color: 0x0a3b2e,
+                emissive: 0x002211
+            });
+            const sphere2 = new THREE.Mesh(geometry2, material2);
+            sphere2.position.x = size * 0.35;
+            sphere2.position.y = size * 0.1;
+            moonGroup.add(sphere2);
+            
+            moonGroup.position.set(pos.x, pos.y, pos.z);
+            return moonGroup;
+        }
+        
+        const moon1 = createMoon(0x00ffaa, 2.2, {x: -18, y: 12, z: -25});
+        scene.add(moon1);
+        
+        const moon2 = createMoon(0x88ff88, 1.8, {x: 22, y: -18, z: -35});
+        scene.add(moon2);
+        
+        const moon3 = createMoon(0xaaffaa, 1.3, {x: 12, y: 22, z: -45});
+        scene.add(moon3);
+        
+        // Create some glowing orbs
+        const orbGeometry = new THREE.SphereGeometry(0.8, 16, 16);
+        const orbMaterial = new THREE.MeshPhongMaterial({
+            color: 0x00ffaa,
+            emissive: 0x004422,
+            transparent: true,
+            opacity: 0.6
+        });
+        
+        for (let i = 0; i < 12; i++) {
+            const orb = new THREE.Mesh(orbGeometry, orbMaterial);
+            const angle = (i / 12) * Math.PI * 2;
+            const radius = 28;
+            orb.position.set(
+                Math.cos(angle) * radius,
+                Math.sin(angle * 2) * 10,
+                Math.sin(angle) * radius - 20
+            );
+            scene.add(orb);
+        }
+        
+        // Device orientation with SLOWER response
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+        let currentRotationX = 0;
+        let currentRotationY = 0;
+        
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', function(event) {
+                if (event.beta !== null && event.gamma !== null) {
+                    // DIPERLAMBAT RESPONSENYA
+                    targetRotationX = (event.beta / 120) * 0.25; // Lebih kecil multiplier
+                    targetRotationY = (event.gamma / 120) * 0.25;
+                }
+            });
+        } else {
+            window.addEventListener('mousemove', function(event) {
+                targetRotationY = (event.clientX / window.innerWidth - 0.5) * 0.4; // Lebih lambat
+                targetRotationX = (event.clientY / window.innerHeight - 0.5) * 0.2;
+            });
+        }
+        
+        // Animation loop - SUPER LEMBUT
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Smooth rotation - DIPERLAMBAT BANGET
+            currentRotationX += (targetRotationX - currentRotationX) * 0.015; // Lebih lambat
+            currentRotationY += (targetRotationY - currentRotationY) * 0.015;
+            
+            // Rotasi objects - SANGAT PELAN
+            stars.rotation.x += 0.0001 + currentRotationX * 0.003; // Lebih pelan
+            stars.rotation.y += 0.00015 + currentRotationY * 0.003;
+            
+            moon1.rotation.y += 0.0015; // Pelan
+            moon1.rotation.x += 0.0008;
+            moon2.rotation.y += 0.002;
+            moon2.rotation.z += 0.001;
+            moon3.rotation.x += 0.0012;
+            moon3.rotation.y += 0.0018;
+            
+            // Camera movement - SANGAT LEMBUT
+            camera.position.x += (currentRotationY *
